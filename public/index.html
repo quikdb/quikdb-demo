@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuikDB Demo - This Job Never Stops</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Main headline -->
+        <div class="headline">
+            <h1>THIS JOB HAS BEEN RUNNING ALL DAY</h1>
+            <p class="subtitle" id="rotating-subtitle">No servers to manage.</p>
+        </div>
+
+        <!-- Live stats section -->
+        <div class="stats-section">
+            <div class="stat-card uptime-card">
+                <div class="stat-label">UPTIME</div>
+                <div class="stat-value" id="uptime">00h 00m 00s</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">EXECUTIONS</div>
+                <div class="stat-value" id="executions">0</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">FAILED</div>
+                <div class="stat-value failed" id="failed">0</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">ACTIVE REPLICAS</div>
+                <div class="stat-value" id="active-replicas">3</div>
+            </div>
+
+            <div class="stat-card failure-card">
+                <div class="stat-label">LAST NODE FAILURE</div>
+                <div class="stat-value" id="last-failure">Never</div>
+            </div>
+        </div>
+
+        <!-- Live feed section -->
+        <div class="feed-section">
+            <h2>LIVE EXECUTION FEED</h2>
+            <div class="feed" id="feed">
+                <div class="feed-item waiting">Waiting for first execution...</div>
+            </div>
+        </div>
+
+        <!-- Interactive section -->
+        <div class="interactive-section">
+            <div class="challenge">
+                <h2>TRY TO BREAK THIS JOB</h2>
+                <p class="challenge-subtitle">Disconnect a node. The job will keep running.</p>
+                <button id="break-button" class="break-button">DISCONNECT A NODE</button>
+                <div class="challenge-status" id="challenge-status"></div>
+            </div>
+        </div>
+
+        <!-- Node status -->
+        <div class="nodes-section">
+            <h3>NODE STATUS</h3>
+            <div class="nodes" id="nodes"></div>
+        </div>
+
+        <!-- Call to action -->
+        <div class="cta">
+            <p>Ask us to run one of your jobs next.</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
