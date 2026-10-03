@@ -1,0 +1,25 @@
+name: Validate HubSpot tracking
+
+on:
+  pull_request:
+    paths:
+      - "app/**"
+      - "package.json"
+      - "yarn.lock"
+      - ".github/workflows/validate-hubspot-tracking.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+      - run: corepack enable
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
