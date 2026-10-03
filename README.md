@@ -1,6 +1,6 @@
 # QuikDB Demo - This Job Never Stops
 
-An interactive Next.js demonstration showcasing QuikDB's always-on reliability and fault tolerance. Built for Vercel deployment with a single-page, no-scroll design.
+An interactive Next.js demonstration showcasing QuikDB's always-on reliability and fault tolerance. Built as a single-page, no-scroll experience and deployed on QuikDB infrastructure.
 
 ## 🎯 What This Demo Shows
 
@@ -40,17 +40,11 @@ yarn build
 yarn start
 ```
 
-## 🌐 Deploy to Vercel
+## 🌐 Production deployment
 
-### Manual Deploy
-
-```bash
-# Install Vercel CLI
-yarn global add vercel
-
-# Deploy
-vercel
-```
+Production deployment is owned by `quikdb-infra/applications/demo/`. Its GitHub Actions workflow
+builds this repository as a container, pushes the image to QuikDB's ECR repository, and deploys the
+single-replica workload to the shared EKS cluster behind `demo.quikdb.com`.
 
 ## 📋 Features
 
@@ -136,7 +130,7 @@ When people stop to look:
 - **Framework**: Next.js 14 (App Router)
 - **Styling**: CSS with global styles
 - **API**: Next.js API Routes with polling
-- **Deployment**: Optimized for Vercel serverless
+- **Deployment**: Standalone Next.js container on QuikDB EKS
 
 ### File Structure
 
@@ -151,7 +145,6 @@ quikdb-demo/
 │           └── route.ts    # API endpoint for stats
 ├── next.config.js
 ├── tsconfig.json
-├── vercel.json
 ├── package.json
 └── README.md
 ```
