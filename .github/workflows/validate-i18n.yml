@@ -42,10 +42,11 @@ jobs:
           for attempt in {1..30}; do curl -fsS http://127.0.0.1:4173/ >/dev/null && break; sleep 1; done
           node scripts/i18n-visual.mjs
       - name: Build review-only Arabic fallback
-        run: I18N_ARABIC_REVIEW_MODE=true NEXT_PUBLIC_I18N_COVERAGE_PROBE=true yarn build
+        run: I18N_ARABIC_REVIEW_MODE=true I18N_COVERAGE_PROBE=true NEXT_PUBLIC_I18N_COVERAGE_PROBE=true yarn build
       - name: Verify switcher, persistence, fallback and desktop/mobile interaction
         env:
           I18N_ARABIC_REVIEW_MODE: "true"
+          I18N_COVERAGE_PROBE: "true"
           NEXT_PUBLIC_I18N_COVERAGE_PROBE: "true"
           I18N_TEST_MODE: "review"
           VISUAL_BASE_URL: "http://127.0.0.1:4174"
