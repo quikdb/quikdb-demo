@@ -1,0 +1,8 @@
+{
+  "repository": "quikdb-demo",
+  "roots": ["app", "components"],
+  "excludePrefixes": ["app/api"],
+  "catalogues": ["i18n/en.json"],
+  "manifest": "docs/i18n/coverage-manifest.json",
+  "activeRoutes": ["/"]
+}

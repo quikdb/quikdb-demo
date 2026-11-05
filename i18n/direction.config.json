@@ -1,0 +1,14 @@
+{
+  "repository": "quikdb-demo",
+  "roots": ["app", "components", "i18n"],
+  "excludePrefixes": ["app/api"],
+  "manifest": "docs/i18n/direction-manifest.json",
+  "exceptions": [
+    {"path":"app/globals.css","token":"left-column","source":".left-column,","evidence":"Stable CSS grid-area selector name; it does not apply a physical CSS direction property."},
+    {"path":"app/globals.css","token":"right-column","source":".right-column {","evidence":"Stable CSS grid-area selector name; it does not apply a physical CSS direction property."},
+    {"path":"app/globals.css","token":"left","source":"/* Stats grid - top left */","evidence":"Comment describing the fixed desktop grid artwork; no physical CSS property or utility."},
+    {"path":"app/globals.css","token":"left","source":"/* Feed section - bottom left */","evidence":"Comment describing the fixed desktop grid artwork; no physical CSS property or utility."},
+    {"path":"app/globals.css","token":"right","source":"/* Node status - top right */","evidence":"Comment describing the fixed desktop grid artwork; no physical CSS property or utility."},
+    {"path":"app/globals.css","token":"right","source":"/* Info section - bottom right */","evidence":"Comment describing the fixed desktop grid artwork; no physical CSS property or utility."}
+  ]
+}

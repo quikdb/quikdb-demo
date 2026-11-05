@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "repository": "quikdb-demo",
+  "roots": [
+    "app",
+    "components",
+    "i18n"
+  ],
+  "counts": {
+    "total": 2,
+    "actionable": 0,
+    "exceptions": 2
+  },
+  "rows": [
+    {
+      "path": "app/globals.css",
+      "line": 277,
+      "kind": "physical-utility",
+      "token": "left-column",
+      "source": ".left-column,",
+      "disposition": "dir-scoped-exception",
+      "evidence": "Stable CSS grid-area selector name; it does not apply a physical CSS direction property."
+    },
+    {
+      "path": "app/globals.css",
+      "line": 278,
+      "kind": "physical-utility",
+      "token": "right-column",
+      "source": ".right-column {",
+      "disposition": "dir-scoped-exception",
+      "evidence": "Stable CSS grid-area selector name; it does not apply a physical CSS direction property."
+    }
+  ]
+}

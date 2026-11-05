@@ -1,5 +1,20 @@
 # quikdb-demo
 
+## Exactly-en/ar locale candidate — 2026-11-05
+
+The active public reliability demo now has a complete English source catalogue, intentionally empty
+Arabic review catalogue, browser-first detection, visible switcher, document-level RTL, logical
+switcher positioning and localized dynamic status/feed copy. Arabic remains server-disabled until
+named human review; product names and technical node identifiers remain unchanged.
+
+PR qualification separately exercises the production Arabic gate and the CI-only review switcher,
+including keyboard focus, EN-to-AR and AR-to-EN interaction, persisted reload, English fallback,
+RTL boundaries and desktop/mobile screenshots.
+
+Both enforcement ledgers are acceptance-clean: the customer string ledger has 32 runtime catalogue
+references and zero unowned strings; the direction ledger has zero actionable rows and two explicit
+CSS grid-area selector exceptions (`left-column`/`right-column`) that do not apply direction.
+
 Single-page public reliability demo at `demo.quikdb.com`.
 
 ## HubSpot tracking

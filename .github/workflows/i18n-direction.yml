@@ -1,0 +1,22 @@
+name: Enforce logical RTL direction
+
+on:
+  pull_request:
+    paths: ["app/**", "components/**", "i18n/**", "scripts/i18n-direction-*", ".github/workflows/i18n-direction.yml"]
+
+jobs:
+  direction:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - run: node scripts/i18n-direction-coverage.mjs --emit > direction-coverage.json
+      - run: node scripts/i18n-direction-coverage.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: i18n-direction-ledger
+          path: direction-coverage.json

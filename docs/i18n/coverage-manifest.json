@@ -1,0 +1,308 @@
+{
+  "schemaVersion": 3,
+  "repository": "quikdb-demo",
+  "activeRoutes": [
+    "/"
+  ],
+  "excludedRouteEvidence": {},
+  "counts": {
+    "total": 32,
+    "catalogue-reference": 32,
+    "unowned": 0
+  },
+  "policy": {
+    "catalogue": "Only useLocale().t, namespaced next-intl useTranslations/getTranslations, request-locale translate(locale,key), or I18nText context-consumer references count as migrated.",
+    "authoredContent": "Only explicit data-i18n-content nodes and Markdown/MDX prose rows may be content-review exclusions.",
+    "skippedRuntimeData": "User content and technical identifiers require an explicit data-i18n-skip boundary; broad customer-route exclusions are forbidden."
+  },
+  "rows": [
+    {
+      "path": "app/page.tsx",
+      "line": 26,
+      "kind": "runtime-key",
+      "key": "subtitle.servers",
+      "englishSource": "No servers to manage.",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 26,
+      "kind": "runtime-key",
+      "key": "subtitle.onCall",
+      "englishSource": "No one on call.",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 26,
+      "kind": "runtime-key",
+      "key": "subtitle.missed",
+      "englishSource": "No missed runs.",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 66,
+      "kind": "runtime-key",
+      "key": "challenge.disconnecting",
+      "englishSource": "Disconnecting node…",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 78,
+      "kind": "runtime-key",
+      "key": "challenge.success",
+      "englishSource": "Node {node} disconnected. Job still running!",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 81,
+      "kind": "runtime-key",
+      "key": "challenge.error",
+      "englishSource": "Error disconnecting node",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 84,
+      "kind": "runtime-key",
+      "key": "challenge.error",
+      "englishSource": "Error disconnecting node",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 100,
+      "kind": "runtime-key",
+      "key": "feed.dropped",
+      "englishSource": "node {replica} dropped",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 101,
+      "kind": "runtime-key",
+      "key": "feed.recovered",
+      "englishSource": "node {replica} recovered",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 102,
+      "kind": "runtime-key",
+      "key": "feed.executed",
+      "englishSource": "job executed (replica {replica})",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 109,
+      "kind": "runtime-key",
+      "key": "loading",
+      "englishSource": "Loading…",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 120,
+      "kind": "runtime-key",
+      "key": "banner",
+      "englishSource": "What's your question? Stop by and ask us anything.",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 126,
+      "kind": "runtime-key",
+      "key": "headline",
+      "englishSource": "THIS JOB HAS BEEN RUNNING ALL DAY",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 135,
+      "kind": "runtime-key",
+      "key": "stats.uptime",
+      "englishSource": "UPTIME",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 139,
+      "kind": "runtime-key",
+      "key": "stats.executions",
+      "englishSource": "EXECUTIONS",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 143,
+      "kind": "runtime-key",
+      "key": "stats.failed",
+      "englishSource": "FAILED",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 147,
+      "kind": "runtime-key",
+      "key": "stats.replicas",
+      "englishSource": "ACTIVE REPLICAS",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 154,
+      "kind": "runtime-key",
+      "key": "feed.title",
+      "englishSource": "LIVE EXECUTION FEED",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 157,
+      "kind": "runtime-key",
+      "key": "feed.waiting",
+      "englishSource": "Waiting for first execution…",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 172,
+      "kind": "runtime-key",
+      "key": "challenge.title",
+      "englishSource": "TRY TO BREAK THIS JOB",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 173,
+      "kind": "runtime-key",
+      "key": "challenge.subtitle",
+      "englishSource": "Disconnect a node. The job will keep running.",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 179,
+      "kind": "runtime-key",
+      "key": "challenge.button",
+      "englishSource": "DISCONNECT A NODE",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 186,
+      "kind": "runtime-key",
+      "key": "nodes.title",
+      "englishSource": "NODE STATUS",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 190,
+      "kind": "runtime-key",
+      "key": "nodes.node",
+      "englishSource": "Node {node}",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 192,
+      "kind": "runtime-key",
+      "key": "nodes.active",
+      "englishSource": "ACTIVE",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 192,
+      "kind": "runtime-key",
+      "key": "nodes.disconnected",
+      "englishSource": "DISCONNECTED",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 201,
+      "kind": "runtime-key",
+      "key": "always.title",
+      "englishSource": "ALWAYS ON",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "app/page.tsx",
+      "line": 202,
+      "kind": "runtime-key",
+      "key": "always.body",
+      "englishSource": "Zero downtime. Zero failures. Even when infrastructure fails.",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "components/LocaleSwitcher.tsx",
+      "line": 3,
+      "kind": "runtime-key",
+      "key": "locale.label",
+      "englishSource": "Language",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "components/LocaleSwitcher.tsx",
+      "line": 3,
+      "kind": "runtime-key",
+      "key": "locale.english",
+      "englishSource": "English",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "components/LocaleSwitcher.tsx",
+      "line": 3,
+      "kind": "runtime-key",
+      "key": "locale.arabic",
+      "englishSource": "Arabic",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    },
+    {
+      "path": "components/LocaleSwitcher.tsx",
+      "line": 3,
+      "kind": "runtime-key",
+      "key": "locale.arabicPending",
+      "englishSource": "Arabic — awaiting language review",
+      "disposition": "catalogue-reference",
+      "evidence": "stable key resolved in committed English catalogue"
+    }
+  ]
+}
