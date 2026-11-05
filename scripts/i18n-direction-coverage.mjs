@@ -6,7 +6,7 @@ import { resolve } from "node:path";
 const root = process.cwd();
 const config = JSON.parse(readFileSync(resolve(root, "i18n/direction.config.json"), "utf8"));
 const tracked = execFileSync("git", ["ls-files"], { cwd: root, encoding: "utf8" }).trim().split("\n");
-const utility = /(?<![A-Za-z0-9_-])((?:[A-Za-z0-9_-]+:)*(?:-?(?:ml|mr|pl|pr|left|right)(?:-[A-Za-z0-9_./\[\]%-]+)?|text-(?:left|right)|border-(?:l|r)(?:-[A-Za-z0-9_./\[\]%-]+)?|rounded-(?:l|r|tl|tr|bl|br)(?:-[A-Za-z0-9_./\[\]%-]+)?|float-(?:left|right)))(?![A-Za-z0-9_-])/g;
+const utility = /(?<![A-Za-z0-9_-])((?:[A-Za-z0-9_-]+:)*(?:-?(?:ml|mr|pl|pr|left|right)-[A-Za-z0-9_./\[\]%-]+|text-(?:left|right)|border-(?:l|r)(?:-[A-Za-z0-9_./\[\]%-]+)?|rounded-(?:l|r|tl|tr|bl|br)(?:-[A-Za-z0-9_./\[\]%-]+)?|float-(?:left|right)))(?![A-Za-z0-9_-])/g;
 const css = /\b((?:margin|padding|border)-(?:left|right)(?:-[a-z-]+)?|(?:left|right)|text-align|float)\s*:\s*([^;}{]+)/g;
 const rows = [];
 for (const path of tracked) {
@@ -15,6 +15,7 @@ for (const path of tracked) {
   const lines = readFileSync(resolve(root, path), "utf8").split(/\r?\n/);
   lines.forEach((line, index) => {
     for (const match of line.matchAll(utility)) rows.push({ path, line: index + 1, kind: "physical-utility", token: match[1], source: line.trim() });
+    if (!/\.(?:css|scss)$/.test(path)) return;
     for (const match of line.matchAll(css)) {
       if (match[1] === "text-align" && !/^\s*(?:left|right)\s*$/.test(match[2])) continue;
       if (match[1] === "float" && !/^\s*(?:left|right)\s*$/.test(match[2])) continue;

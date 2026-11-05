@@ -12,8 +12,8 @@ const swapBase = (base) => {
   const negative = base.startsWith("-") ? "-" : "";
   const value = negative ? base.slice(1) : base;
   const pairs = [
-    [/^ml(?=-|$)/, "ms"], [/^mr(?=-|$)/, "me"], [/^pl(?=-|$)/, "ps"], [/^pr(?=-|$)/, "pe"],
-    [/^left(?=-|$)/, "start"], [/^right(?=-|$)/, "end"],
+    [/^ml(?=-)/, "ms"], [/^mr(?=-)/, "me"], [/^pl(?=-)/, "ps"], [/^pr(?=-)/, "pe"],
+    [/^left(?=-)/, "start"], [/^right(?=-)/, "end"],
     [/^text-left$/, "text-start"], [/^text-right$/, "text-end"],
     [/^border-l(?=-|$)/, "border-s"], [/^border-r(?=-|$)/, "border-e"],
     [/^rounded-tl(?=-|$)/, "rounded-ss"], [/^rounded-tr(?=-|$)/, "rounded-se"],
@@ -53,7 +53,7 @@ for (const path of tracked) {
     const source = ts.createSourceFile(path, text, ts.ScriptTarget.Latest, true, path.endsWith("x") ? ts.ScriptKind.TSX : ts.ScriptKind.TS);
     const replacements = [];
     const visit = (node) => {
-      if ((ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node) || ts.isTemplateHead(node) || ts.isTemplateMiddle(node) || ts.isTemplateTail(node)) && inClassContext(node)) {
+      if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node) || ts.isTemplateHead(node) || ts.isTemplateMiddle(node) || ts.isTemplateTail(node)) {
         const start = node.getStart(source), end = node.end;
         const raw = text.slice(start, end), next = logicalClasses(raw);
         if (next !== raw) replacements.push({ start, end, value: next });
