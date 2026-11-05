@@ -4,6 +4,7 @@
   "activeRoutes": [
     "/"
   ],
+  "excludedRouteEvidence": {},
   "counts": {
     "total": 32,
     "catalogue-reference": 32,
@@ -303,6 +304,5 @@
       "disposition": "catalogue-reference",
       "evidence": "stable key resolved in committed English catalogue"
     }
-  ],
-  "excludedRouteEvidence": {}
+  ]
 }
