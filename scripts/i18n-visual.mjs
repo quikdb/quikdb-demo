@@ -16,12 +16,13 @@ const assertBoundary = async (page, locale, label) => {
 
 const browser = await chromium.launch({ headless: true });
 if (mode === "review") {
-  const ssrContext = await browser.newContext();
-  const response = await ssrContext.request.get(new URL(pagePath, baseURL).toString(), {
-    headers: { Cookie: "quikdb.locale=ar" },
-  });
-  assert(response.ok(), `Arabic request SSR probe failed with ${response.status()}`);
-  const renderedHtml = (await response.text()).replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
+  const ssrContext = await browser.newContext({ javaScriptEnabled: false });
+  await ssrContext.addCookies([{ name: "quikdb.locale", value: "ar", domain: "127.0.0.1", path: "/" }]);
+  const ssrPage = await ssrContext.newPage();
+  const response = await ssrPage.goto(new URL(pagePath, baseURL).toString(), { waitUntil: "domcontentloaded" });
+  assert(response?.ok(), `Arabic request SSR probe failed with ${response?.status()}`);
+  const renderedHtml = await ssrPage.content();
+  await assertBoundary(ssrPage, "ar", "JavaScript-disabled Arabic SSR");
   assert(renderedHtml.includes("⟦headline⟧"), "Arabic request SSR did not render the catalogue probe");
   assert(!renderedHtml.includes("THIS JOB HAS BEEN RUNNING ALL DAY"), "Arabic request SSR retained the original literal");
   await ssrContext.close();
