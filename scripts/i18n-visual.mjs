@@ -23,8 +23,8 @@ if (mode === "review") {
   assert(response?.ok(), `Arabic request SSR probe failed with ${response?.status()}`);
   const renderedHtml = await ssrPage.content();
   await assertBoundary(ssrPage, "ar", "JavaScript-disabled Arabic SSR");
-  assert(renderedHtml.includes("⟦headline⟧"), "Arabic request SSR did not render the catalogue probe");
-  assert(!renderedHtml.includes("THIS JOB HAS BEEN RUNNING ALL DAY"), "Arabic request SSR retained the original literal");
+  assert(renderedHtml.includes("⟦meta.title⟧"), "Arabic request metadata did not render the server catalogue probe");
+  assert(!renderedHtml.includes("QuikDB Demo — This Job Never Stops"), "Arabic request metadata retained the original English title");
   await ssrContext.close();
 }
 for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: "mobile", width: 390, height: 844 }]) {

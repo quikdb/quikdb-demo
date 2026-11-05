@@ -8,7 +8,7 @@ import { arabicEnabled, defaultLocale, direction, isLocale } from '@/i18n/config
 import { t } from '@/i18n/runtime'
 
 async function requestLocale() { const value = (await headers()).get('x-quikdb-locale'); return isLocale(value) ? value : defaultLocale }
-export async function generateMetadata(): Promise<Metadata> { const locale = await requestLocale(); return { title: t(locale, 'meta.title'), description: t(locale, 'meta.description') } }
+export async function generateMetadata(): Promise<Metadata> { const locale = await requestLocale(); const coverageProbe = process.env.I18N_COVERAGE_PROBE === "true"; return { title: t(locale, 'meta.title', {}, coverageProbe), description: t(locale, 'meta.description', {}, coverageProbe) } }
 
 export default async function RootLayout({
   children,
