@@ -20,7 +20,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={direction(locale)}>
       <body>
-        <LocaleProvider initialLocale={locale} arabicEnabled={allowArabic}>{children}<LocaleSwitcher arabicEnabled={allowArabic} /></LocaleProvider>
+        <LocaleProvider initialLocale={locale} arabicEnabled={allowArabic} coverageProbe={process.env.I18N_COVERAGE_PROBE === "true"}>{children}<LocaleSwitcher arabicEnabled={allowArabic} /></LocaleProvider>
         <Script
           id="hs-script-loader"
           src="https://js-eu1.hs-scripts.com/149469290.js"
