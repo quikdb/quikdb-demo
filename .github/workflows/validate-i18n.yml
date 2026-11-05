@@ -1,0 +1,24 @@
+name: Validate en/ar web contract
+
+on:
+  pull_request:
+    paths: ["app/**", "components/**", "i18n/**", "middleware.ts", "DOCS.md", ".github/workflows/validate-i18n.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: arc-runner-set
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20", cache: yarn }
+      - run: corepack enable
+      - run: yarn install --frozen-lockfile
+      - name: Build production English gate
+        run: yarn build
+      - name: Build review-only Arabic fallback
+        run: I18N_ARABIC_REVIEW_MODE=true yarn build

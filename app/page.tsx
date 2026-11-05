@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useLocale } from '@/i18n/LocaleProvider';
 
 interface Stats {
   uptime: { hours: number; minutes: number; seconds: number };
@@ -20,13 +21,9 @@ interface Stats {
   }>;
 }
 
-const subtitles = [
-  "No servers to manage.",
-  "No one on call.",
-  "No missed runs."
-];
-
 export default function Home() {
+  const { t } = useLocale();
+  const subtitles = [t('subtitle.servers'), t('subtitle.onCall'), t('subtitle.missed')];
   const [stats, setStats] = useState<Stats | null>(null);
   const [subtitleIndex, setSubtitleIndex] = useState(0);
   const [isBreakDisabled, setIsBreakDisabled] = useState(false);
@@ -66,7 +63,7 @@ export default function Home() {
 
   const handleBreakClick = async () => {
     setIsBreakDisabled(true);
-    setChallengeStatus('Disconnecting node...');
+    setChallengeStatus(t('challenge.disconnecting'));
 
     try {
       const response = await fetch('/api/stats', {
@@ -78,13 +75,13 @@ export default function Home() {
       const data = await response.json();
 
       if (data.success) {
-        setChallengeStatus(`Node ${data.node.id} disconnected. Job still running!`);
+        setChallengeStatus(t('challenge.success', { node: data.node.id }));
         setStats(data.stats);
       } else {
-        setChallengeStatus(data.error || 'Error');
+        setChallengeStatus(data.error || t('challenge.error'));
       }
     } catch (error) {
-      setChallengeStatus('Error disconnecting node');
+      setChallengeStatus(t('challenge.error'));
     }
 
     setTimeout(() => {
@@ -100,16 +97,16 @@ export default function Home() {
   };
 
   const getExecutionText = (execution: { status: string; replica: number }) => {
-    if (execution.status === 'node_dropped') return `node ${execution.replica} dropped`;
-    if (execution.status === 'node_recovered') return `node ${execution.replica} recovered`;
-    return `job executed (replica ${execution.replica})`;
+    if (execution.status === 'node_dropped') return t('feed.dropped', { replica: execution.replica });
+    if (execution.status === 'node_recovered') return t('feed.recovered', { replica: execution.replica });
+    return t('feed.executed', { replica: execution.replica });
   };
 
   if (!stats) {
     return (
       <div className="container">
         <div className="headline">
-          <h1>Loading...</h1>
+          <h1>{t('loading')}</h1>
         </div>
       </div>
     );
@@ -120,15 +117,13 @@ export default function Home() {
       {/* CTA Banner - Top */}
       <div className="cta-banner">
         <div className="cta-content">
-          <span>What's your question? Stop by and ask us anything.</span>
-          <span>What's your question? Stop by and ask us anything.</span>
-          <span>What's your question? Stop by and ask us anything.</span>
+          <span>{t('banner')}</span><span>{t('banner')}</span><span>{t('banner')}</span>
         </div>
       </div>
 
       {/* Headline */}
       <div className="headline">
-        <h1>THIS JOB HAS BEEN RUNNING ALL DAY</h1>
+        <h1>{t('headline')}</h1>
         <p className="subtitle">{subtitles[subtitleIndex]}</p>
       </div>
 
@@ -137,29 +132,29 @@ export default function Home() {
         {/* Stats - Top Left */}
         <div className="stats-grid">
           <div className="stat-card">
-            <div className="stat-label">UPTIME</div>
+            <div className="stat-label">{t('stats.uptime')}</div>
             <div className="stat-value large">{formatUptime(stats.uptime)}</div>
           </div>
           <div className="stat-card">
-            <div className="stat-label">EXECUTIONS</div>
+            <div className="stat-label">{t('stats.executions')}</div>
             <div className="stat-value">{stats.executions.toLocaleString()}</div>
           </div>
           <div className="stat-card">
-            <div className="stat-label">FAILED</div>
+            <div className="stat-label">{t('stats.failed')}</div>
             <div className="stat-value">{stats.failed}</div>
           </div>
           <div className="stat-card">
-            <div className="stat-label">ACTIVE REPLICAS</div>
+            <div className="stat-label">{t('stats.replicas')}</div>
             <div className="stat-value">{stats.activeReplicas}</div>
           </div>
         </div>
 
         {/* Feed - Bottom Left */}
         <div className="feed-section">
-          <h2>LIVE EXECUTION FEED</h2>
+          <h2>{t('feed.title')}</h2>
           <div className="feed">
             {stats.jobExecutions.length === 0 ? (
-              <div className="feed-item waiting">Waiting for first execution...</div>
+              <div className="feed-item waiting">{t('feed.waiting')}</div>
             ) : (
               stats.jobExecutions.map((execution, index) => (
                 <div key={index} className={`feed-item ${execution.status.replace('_', '-')}`}>
@@ -174,27 +169,27 @@ export default function Home() {
 
         {/* Center - Big Button */}
         <div className="challenge">
-          <h2>TRY TO BREAK THIS JOB</h2>
-          <p className="challenge-subtitle">Disconnect a node. The job will keep running.</p>
+          <h2>{t('challenge.title')}</h2>
+          <p className="challenge-subtitle">{t('challenge.subtitle')}</p>
           <button
             className="break-button"
             onClick={handleBreakClick}
             disabled={isBreakDisabled}
           >
-            DISCONNECT A NODE
+            {t('challenge.button')}
           </button>
           <div className="challenge-status">{challengeStatus}</div>
         </div>
 
         {/* Nodes - Top Right */}
         <div className="nodes-section">
-          <h3>NODE STATUS</h3>
+          <h3>{t('nodes.title')}</h3>
           <div className="nodes">
             {stats.nodes.map((node) => (
               <div key={node.id} className={`node ${node.status}`}>
-                <div className="node-id">Node {node.id}</div>
+                <div className="node-id">{t('nodes.node', { node: node.id })}</div>
                 <div className="node-status">
-                  {node.status === 'active' ? 'ACTIVE' : 'DISCONNECTED'}
+                  {node.status === 'active' ? t('nodes.active') : t('nodes.disconnected')}
                 </div>
               </div>
             ))}
@@ -203,8 +198,8 @@ export default function Home() {
 
         {/* Info - Bottom Right */}
         <div className="info-section">
-          <h3>ALWAYS ON</h3>
-          <p>Zero downtime. Zero failures. Even when infrastructure fails.</p>
+          <h3>{t('always.title')}</h3>
+          <p>{t('always.body')}</p>
         </div>
       </div>
     </div>

@@ -1,5 +1,12 @@
 # quikdb-demo
 
+## Exactly-en/ar locale candidate — 2026-11-05
+
+The active public reliability demo now has a complete English source catalogue, intentionally empty
+Arabic review catalogue, browser-first detection, visible switcher, document-level RTL, logical
+switcher positioning and localized dynamic status/feed copy. Arabic remains server-disabled until
+named human review; product names and technical node identifiers remain unchanged.
+
 Single-page public reliability demo at `demo.quikdb.com`.
 
 ## HubSpot tracking
