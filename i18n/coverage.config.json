@@ -2,10 +2,7 @@
   "repository": "quikdb-demo",
   "roots": ["app", "components"],
   "excludePrefixes": ["app/api"],
-  "authoredContentPrefixes": [],
-  "authoredContentEvidence": "No active demo shell path is excluded as authored prose.",
-  "explicitCatalogues": ["i18n/en.json"],
-  "sourceCatalogue": "i18n/en.source.json",
+  "catalogues": ["i18n/en.json"],
   "manifest": "docs/i18n/coverage-manifest.json",
   "activeRoutes": ["/"]
 }
