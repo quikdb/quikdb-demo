@@ -20,7 +20,8 @@ jobs:
         with: { node-version: "20" }
       - run: corepack enable
       - run: yarn install --frozen-lockfile
-      - run: node scripts/i18n-coverage.mjs --emit > i18n-coverage-bundle.json
+      - name: Enforce committed active-route catalogue coverage
+        run: node scripts/i18n-coverage.mjs
       - run: node --check scripts/i18n-visual.mjs
       - name: Build production English gate
         run: yarn build
@@ -39,7 +40,7 @@ jobs:
           for attempt in {1..30}; do curl -fsS http://127.0.0.1:4173/ >/dev/null && break; sleep 1; done
           node scripts/i18n-visual.mjs
       - name: Build review-only Arabic fallback
-        run: I18N_ARABIC_REVIEW_MODE=true yarn build
+        run: I18N_ARABIC_REVIEW_MODE=true NEXT_PUBLIC_I18N_COVERAGE_PROBE=true yarn build
       - name: Verify switcher, persistence, fallback and desktop/mobile interaction
         env:
           I18N_ARABIC_REVIEW_MODE: "true"
@@ -57,7 +58,3 @@ jobs:
         with:
           name: i18n-rtl-screenshots
           path: artifacts/i18n
-      - uses: actions/upload-artifact@v4
-        with:
-          name: i18n-coverage-ledger
-          path: i18n-coverage-bundle.json

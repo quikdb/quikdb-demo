@@ -72,6 +72,20 @@ for (const path of tracked) {
   if (!/\.[cm]?[jt]sx?$/.test(path)) continue;
   const text = readFileSync(resolve(root, path), "utf8");
   const source = ts.createSourceFile(path, text, ts.ScriptTarget.Latest, true, path.endsWith("x") ? ts.ScriptKind.TSX : ts.ScriptKind.TS);
+  const translatorNamespaces = new Map();
+  const collectTranslators = (node) => {
+    if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.initializer) {
+      const initializer = ts.isAwaitExpression(node.initializer) ? node.initializer.expression : node.initializer;
+      if (ts.isCallExpression(initializer)) {
+        const callee = initializer.expression;
+        const name = ts.isIdentifier(callee) ? callee.text : ts.isPropertyAccessExpression(callee) ? callee.name.text : "";
+        const namespace = initializer.arguments[0];
+        if ((name === "useTranslations" || name === "getTranslations") && namespace && ts.isStringLiteral(namespace)) translatorNamespaces.set(node.name.text, namespace.text);
+      }
+    }
+    ts.forEachChild(node, collectTranslators);
+  };
+  collectTranslators(source);
   const visit = (node) => {
     if (ts.isJsxText(node)) literalRow(source, path, node, "jsx-text", node.text);
     if (ts.isJsxAttribute(node) && uiAttributes.has(node.name.text) && node.initializer && ts.isStringLiteral(node.initializer)) literalRow(source, path, node, "a11y-or-attribute", node.initializer.text);
@@ -80,7 +94,10 @@ for (const path of tracked) {
       const callee = node.expression;
       const name = ts.isIdentifier(callee) ? callee.text : ts.isPropertyAccessExpression(callee) ? callee.name.text : "";
       const arg = node.arguments[0];
-      if ((name === "t" || name === "translate" || name === "msg") && arg && (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg))) keyRow(source, path, node, arg.text, "runtime-key");
+      if ((name === "t" || name === "translate" || name === "msg" || translatorNamespaces.has(name)) && arg && (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg))) {
+        const namespace = translatorNamespaces.get(name);
+        keyRow(source, path, node, namespace ? `${namespace}.${arg.text}` : arg.text, "runtime-key");
+      }
       else if ((uiCalls.has(name) || (ts.isPropertyAccessExpression(callee) && callee.expression.getText(source) === "toast")) && arg && (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg))) literalRow(source, path, node, "feedback", arg.text);
     }
     if ((ts.isJsxSelfClosingElement(node) || ts.isJsxOpeningElement(node)) && node.tagName.getText(source) === "I18nText") {
@@ -93,7 +110,7 @@ for (const path of tracked) {
 }
 rows.sort((a, b) => a.path.localeCompare(b.path) || a.line - b.line || a.kind.localeCompare(b.kind));
 const counts = rows.reduce((result, row) => ({ ...result, [row.disposition]: (result[row.disposition] ?? 0) + 1 }), {});
-const manifest = { schemaVersion: 2, repository: config.repository, activeRoutes: config.activeRoutes, counts: { total: rows.length, ...counts, unowned: (counts.unowned ?? 0) + (counts["missing-key"] ?? 0) }, policy: { catalogue: "Only t/translate/msg calls or I18nText stable-key references count as migrated.", authoredContent: "Only explicit data-i18n-content nodes and Markdown/MDX prose rows may be content-review exclusions.", skippedRuntimeData: "User content and technical identifiers require an explicit data-i18n-skip boundary; path-wide exclusions are forbidden." }, rows };
+const manifest = { schemaVersion: 2, repository: config.repository, activeRoutes: config.activeRoutes, excludedRouteEvidence: config.excludedRouteEvidence ?? {}, counts: { total: rows.length, ...counts, unowned: (counts.unowned ?? 0) + (counts["missing-key"] ?? 0) }, policy: { catalogue: "Only t/translate/msg calls, namespaced next-intl calls or I18nText stable-key references count as migrated.", authoredContent: "Only explicit data-i18n-content nodes and Markdown/MDX prose rows may be content-review exclusions.", skippedRuntimeData: "User content and technical identifiers require an explicit data-i18n-skip boundary; broad customer-route exclusions are forbidden." }, rows };
 if (process.argv.includes("--emit")) process.stdout.write(JSON.stringify(manifest));
 else {
   const committed = JSON.parse(readFileSync(resolve(root, config.manifest), "utf8"));

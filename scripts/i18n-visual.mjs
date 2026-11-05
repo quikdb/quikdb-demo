@@ -31,9 +31,11 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
   await select.selectOption("ar");
   await page.waitForFunction(() => document.documentElement.dir === "rtl");
   await assertBoundary(page, "ar", `${viewport.name} EN-to-AR`);
+  assert((await page.locator("body").innerText()).includes("⟦headline⟧"), `${viewport.name}: active route did not render the CI catalogue probe`);
+  assert(!(await page.locator("body").innerText()).includes("THIS JOB HAS BEEN RUNNING ALL DAY"), `${viewport.name}: original literal survived instead of the catalogue probe`);
   assert((await context.cookies()).some((cookie) => cookie.name === "quikdb.locale" && cookie.value === "ar"), `${viewport.name}: explicit cookie missing`);
   assert(await page.evaluate(() => localStorage.getItem("quikdb.locale.explicit")) === "ar", `${viewport.name}: explicit localStorage missing`);
-  assert(!(await page.locator("body").innerText()).includes("locale."), `${viewport.name}: raw translation key rendered instead of English fallback`);
+  assert(!/(?:^|\s)(?:meta|locale|stats|feed|challenge|nodes|always)\.[A-Za-z]/m.test(await page.locator("body").innerText()), `${viewport.name}: raw translation key rendered`);
   await page.reload({ waitUntil: "networkidle" });
   await assertBoundary(page, "ar", `${viewport.name} persisted reload`);
   assert(await select.inputValue() === "ar", `${viewport.name}: switcher did not hydrate persisted Arabic`);
