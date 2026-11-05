@@ -20,6 +20,7 @@ jobs:
         with: { node-version: "20" }
       - run: corepack enable
       - run: yarn install --frozen-lockfile
+      - run: node scripts/i18n-coverage.mjs --emit > i18n-coverage-bundle.json
       - run: node --check scripts/i18n-visual.mjs
       - name: Build production English gate
         run: yarn build
@@ -56,3 +57,7 @@ jobs:
         with:
           name: i18n-rtl-screenshots
           path: artifacts/i18n
+      - uses: actions/upload-artifact@v4
+        with:
+          name: i18n-coverage-ledger
+          path: i18n-coverage-bundle.json
