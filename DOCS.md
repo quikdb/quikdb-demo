@@ -7,6 +7,10 @@ Arabic review catalogue, browser-first detection, visible switcher, document-lev
 switcher positioning and localized dynamic status/feed copy. Arabic remains server-disabled until
 named human review; product names and technical node identifiers remain unchanged.
 
+PR qualification separately exercises the production Arabic gate and the CI-only review switcher,
+including keyboard focus, EN-to-AR and AR-to-EN interaction, persisted reload, English fallback,
+RTL boundaries and desktop/mobile screenshots.
+
 Single-page public reliability demo at `demo.quikdb.com`.
 
 ## HubSpot tracking

@@ -1,27 +1,50 @@
 import { chromium } from "playwright";
 import { mkdir } from "node:fs/promises";
 
+const mode = process.env.I18N_TEST_MODE ?? "review";
 const baseURL = process.env.VISUAL_BASE_URL ?? "http://127.0.0.1:4173";
-const path = process.env.VISUAL_PATH ?? "/";
+const pagePath = process.env.VISUAL_PATH ?? "/";
+const selector = process.env.VISUAL_SELECTOR ?? "select";
 await mkdir("artifacts/i18n", { recursive: true });
+const assert = (condition, message) => { if (!condition) throw new Error(message); };
+const assertBoundary = async (page, locale, label) => {
+  const state = await page.locator("html").evaluate((html) => ({ lang: html.lang, dir: html.dir, overflow: html.scrollWidth - html.clientWidth }));
+  assert(state.lang === locale, `${label}: expected lang=${locale}; ${JSON.stringify(state)}`);
+  assert(state.dir === (locale === "ar" ? "rtl" : "ltr"), `${label}: wrong direction; ${JSON.stringify(state)}`);
+  assert(state.overflow <= 1, `${label}: horizontal overflow ${state.overflow}px`);
+};
 
-for (const candidate of [
-  { name: "desktop", viewport: { width: 1440, height: 1000 } },
-  { name: "mobile", viewport: { width: 390, height: 844 } },
-]) {
-  const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext({ viewport: candidate.viewport });
-  await context.addCookies([{ name: "quikdb.locale", value: "ar", domain: "127.0.0.1", path: "/" }]);
+const browser = await chromium.launch({ headless: true });
+for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: "mobile", width: 390, height: 844 }]) {
+  const context = await browser.newContext({ locale: mode === "release" ? "ar-QA" : "en", viewport });
+  if (mode === "release") await context.addCookies([{ name: "quikdb.locale", value: "ar", domain: "127.0.0.1", path: "/" }]);
   const page = await context.newPage();
-  await page.goto(new URL(path, baseURL).toString(), { waitUntil: "networkidle" });
-  const state = await page.locator("html").evaluate((html) => ({
-    lang: html.lang,
-    dir: html.dir,
-    overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-  }));
-  if (state.lang !== "ar" || state.dir !== "rtl" || state.overflow > 1) {
-    throw new Error(`${candidate.name} RTL assertion failed: ${JSON.stringify(state)}`);
+  await page.goto(new URL(pagePath, baseURL).toString(), { waitUntil: "networkidle" });
+  const select = page.locator(selector);
+  if (mode === "release") {
+    await assertBoundary(page, "en", `${viewport.name} release gate`);
+    assert(await select.locator("option[value=ar]").isDisabled(), `${viewport.name}: Arabic release option is enabled`);
+    await context.close();
+    continue;
   }
-  await page.screenshot({ path: `artifacts/i18n/${candidate.name}-ar.png`, fullPage: true });
-  await browser.close();
+  await assertBoundary(page, "en", `${viewport.name} initial`);
+  await select.selectOption("ar");
+  await page.waitForFunction(() => document.documentElement.dir === "rtl");
+  await assertBoundary(page, "ar", `${viewport.name} EN-to-AR`);
+  assert((await context.cookies()).some((cookie) => cookie.name === "quikdb.locale" && cookie.value === "ar"), `${viewport.name}: explicit cookie missing`);
+  assert(await page.evaluate(() => localStorage.getItem("quikdb.locale.explicit")) === "ar", `${viewport.name}: explicit localStorage missing`);
+  assert(!(await page.locator("body").innerText()).includes("locale."), `${viewport.name}: raw translation key rendered instead of English fallback`);
+  await page.reload({ waitUntil: "networkidle" });
+  await assertBoundary(page, "ar", `${viewport.name} persisted reload`);
+  assert(await select.inputValue() === "ar", `${viewport.name}: switcher did not hydrate persisted Arabic`);
+  await select.focus();
+  assert(await page.evaluate((id) => document.activeElement?.id === id, selector.slice(1)), `${viewport.name}: switcher is not keyboard focusable`);
+  await select.press("Home");
+  await page.waitForFunction(() => document.documentElement.dir === "ltr");
+  await assertBoundary(page, "en", `${viewport.name} keyboard AR-to-EN`);
+  await select.selectOption("ar");
+  await page.waitForFunction(() => document.documentElement.dir === "rtl");
+  await page.screenshot({ path: `artifacts/i18n/review-${viewport.name}-ar.png`, fullPage: true });
+  await context.close();
 }
+await browser.close();
