@@ -17,8 +17,10 @@ const assertBoundary = async (page, locale, label) => {
 const browser = await chromium.launch({ headless: true });
 if (mode === "review") {
   const ssrContext = await browser.newContext();
-  await ssrContext.addCookies([{ name: "quikdb.locale", value: "ar", domain: "127.0.0.1", path: "/" }]);
-  const response = await ssrContext.request.get(new URL(pagePath, baseURL).toString());
+  const response = await ssrContext.request.get(new URL(pagePath, baseURL).toString(), {
+    headers: { Cookie: "quikdb.locale=ar" },
+  });
+  assert(response.ok(), `Arabic request SSR probe failed with ${response.status()}`);
   const renderedHtml = (await response.text()).replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
   assert(renderedHtml.includes("⟦headline⟧"), "Arabic request SSR did not render the catalogue probe");
   assert(!renderedHtml.includes("THIS JOB HAS BEEN RUNNING ALL DAY"), "Arabic request SSR retained the original literal");
