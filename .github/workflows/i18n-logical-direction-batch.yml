@@ -13,9 +13,11 @@ jobs:
       - run: corepack enable
       - run: yarn install --frozen-lockfile
       - run: node scripts/i18n-logical-direction-batch.mjs
-      - run: |
+      - id: export
+        run: |
           git diff --check
           git diff -- app components i18n > i18n-logical-direction.patch
-          test -s i18n-logical-direction.patch
+          if test -s i18n-logical-direction.patch; then echo "has_patch=true" >> "$GITHUB_OUTPUT"; else echo "has_patch=false" >> "$GITHUB_OUTPUT"; fi
       - uses: actions/upload-artifact@v4
+        if: steps.export.outputs.has_patch == 'true'
         with: { name: i18n-logical-direction-patch, path: i18n-logical-direction.patch }
