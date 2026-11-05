@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "repository": "quikdb-demo",
   "activeRoutes": [
     "/"
@@ -10,7 +10,7 @@
     "unowned": 0
   },
   "policy": {
-    "catalogue": "Only t/translate/msg calls, namespaced next-intl calls or I18nText stable-key references count as migrated.",
+    "catalogue": "Only useLocale().t, namespaced next-intl useTranslations/getTranslations, request-locale translate(locale,key), or I18nText context-consumer references count as migrated.",
     "authoredContent": "Only explicit data-i18n-content nodes and Markdown/MDX prose rows may be content-review exclusions.",
     "skippedRuntimeData": "User content and technical identifiers require an explicit data-i18n-skip boundary; broad customer-route exclusions are forbidden."
   },

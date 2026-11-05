@@ -15,6 +15,15 @@ const assertBoundary = async (page, locale, label) => {
 };
 
 const browser = await chromium.launch({ headless: true });
+if (mode === "review") {
+  const ssrContext = await browser.newContext();
+  await ssrContext.addCookies([{ name: "quikdb.locale", value: "ar", domain: "127.0.0.1", path: "/" }]);
+  const response = await ssrContext.request.get(new URL(pagePath, baseURL).toString());
+  const renderedHtml = (await response.text()).replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
+  assert(renderedHtml.includes("⟦headline⟧"), "Arabic request SSR did not render the catalogue probe");
+  assert(!renderedHtml.includes("THIS JOB HAS BEEN RUNNING ALL DAY"), "Arabic request SSR retained the original literal");
+  await ssrContext.close();
+}
 for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: "mobile", width: 390, height: 844 }]) {
   const context = await browser.newContext({ locale: mode === "release" ? "ar-QA" : "en", viewport });
   if (mode === "release") await context.addCookies([{ name: "quikdb.locale", value: "ar", domain: "127.0.0.1", path: "/" }]);

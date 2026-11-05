@@ -72,15 +72,40 @@ for (const path of tracked) {
   if (!/\.[cm]?[jt]sx?$/.test(path)) continue;
   const text = readFileSync(resolve(root, path), "utf8");
   const source = ts.createSourceFile(path, text, ts.ScriptTarget.Latest, true, path.endsWith("x") ? ts.ScriptKind.TSX : ts.ScriptKind.TS);
-  const translatorNamespaces = new Map();
+  const translatorBindings = new Map();
+  const translationHooks = new Map();
+  const localeHooks = new Set();
+  const serverTranslators = new Set();
+  const i18nTextComponents = new Set();
+  for (const statement of source.statements) {
+    if (!ts.isImportDeclaration(statement) || !ts.isStringLiteral(statement.moduleSpecifier)) continue;
+    const moduleName = statement.moduleSpecifier.text;
+    const imports = statement.importClause?.namedBindings;
+    if (!imports || !ts.isNamedImports(imports)) continue;
+    for (const element of imports.elements) {
+      const imported = element.propertyName?.text ?? element.name.text;
+      const local = element.name.text;
+      if (moduleName === "next-intl" && imported === "useTranslations") translationHooks.set(local, "client");
+      if (moduleName === "next-intl/server" && imported === "getTranslations") translationHooks.set(local, "server");
+      if (/i18n\/LocaleProvider$/.test(moduleName) && imported === "useLocale") localeHooks.add(local);
+      if (/i18n\/(?:runtime|server)$/.test(moduleName) && imported === "translate") serverTranslators.add(local);
+      if (/i18n\/I18nText$/.test(moduleName) && imported === "I18nText") i18nTextComponents.add(local);
+    }
+  }
   const collectTranslators = (node) => {
-    if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.initializer) {
+    if (ts.isVariableDeclaration(node) && node.initializer) {
       const initializer = ts.isAwaitExpression(node.initializer) ? node.initializer.expression : node.initializer;
       if (ts.isCallExpression(initializer)) {
         const callee = initializer.expression;
         const name = ts.isIdentifier(callee) ? callee.text : ts.isPropertyAccessExpression(callee) ? callee.name.text : "";
         const namespace = initializer.arguments[0];
-        if ((name === "useTranslations" || name === "getTranslations") && namespace && ts.isStringLiteral(namespace)) translatorNamespaces.set(node.name.text, namespace.text);
+        if (ts.isIdentifier(node.name) && translationHooks.has(name)) translatorBindings.set(node.name.text, namespace && ts.isStringLiteral(namespace) ? namespace.text : "");
+        if (ts.isObjectBindingPattern(node.name) && localeHooks.has(name)) {
+          for (const element of node.name.elements) {
+            const sourceName = element.propertyName?.getText(source) ?? element.name.getText(source);
+            if (sourceName === "t" && ts.isIdentifier(element.name)) translatorBindings.set(element.name.text, "");
+          }
+        }
       }
     }
     ts.forEachChild(node, collectTranslators);
@@ -93,14 +118,18 @@ for (const path of tracked) {
     if (ts.isCallExpression(node)) {
       const callee = node.expression;
       const name = ts.isIdentifier(callee) ? callee.text : ts.isPropertyAccessExpression(callee) ? callee.name.text : "";
-      const arg = node.arguments[0];
-      if ((name === "t" || name === "translate" || name === "msg" || translatorNamespaces.has(name)) && arg && (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg))) {
-        const namespace = translatorNamespaces.get(name);
+      const serverTranslate = serverTranslators.has(name) && (config.serverTranslationFiles ?? []).includes(path);
+      const arg = translatorBindings.has(name) ? node.arguments[0] : serverTranslate ? node.arguments[1] : undefined;
+      if ((translatorBindings.has(name) || serverTranslate) && arg && (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg))) {
+        const namespace = translatorBindings.get(name);
         keyRow(source, path, node, namespace ? `${namespace}.${arg.text}` : arg.text, "runtime-key");
       }
-      else if ((uiCalls.has(name) || (ts.isPropertyAccessExpression(callee) && callee.expression.getText(source) === "toast")) && arg && (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg))) literalRow(source, path, node, "feedback", arg.text);
+      else if (uiCalls.has(name) || (ts.isPropertyAccessExpression(callee) && callee.expression.getText(source) === "toast")) {
+        const feedback = node.arguments[0];
+        if (feedback && (ts.isStringLiteral(feedback) || ts.isNoSubstitutionTemplateLiteral(feedback))) literalRow(source, path, node, "feedback", feedback.text);
+      }
     }
-    if ((ts.isJsxSelfClosingElement(node) || ts.isJsxOpeningElement(node)) && node.tagName.getText(source) === "I18nText") {
+    if ((ts.isJsxSelfClosingElement(node) || ts.isJsxOpeningElement(node)) && i18nTextComponents.has(node.tagName.getText(source))) {
       const key = attrValue(node, "id");
       if (key) keyRow(source, path, node, key, "runtime-component-key");
     }
@@ -110,7 +139,7 @@ for (const path of tracked) {
 }
 rows.sort((a, b) => a.path.localeCompare(b.path) || a.line - b.line || a.kind.localeCompare(b.kind));
 const counts = rows.reduce((result, row) => ({ ...result, [row.disposition]: (result[row.disposition] ?? 0) + 1 }), {});
-const manifest = { schemaVersion: 2, repository: config.repository, activeRoutes: config.activeRoutes, excludedRouteEvidence: config.excludedRouteEvidence ?? {}, counts: { total: rows.length, ...counts, unowned: (counts.unowned ?? 0) + (counts["missing-key"] ?? 0) }, policy: { catalogue: "Only t/translate/msg calls, namespaced next-intl calls or I18nText stable-key references count as migrated.", authoredContent: "Only explicit data-i18n-content nodes and Markdown/MDX prose rows may be content-review exclusions.", skippedRuntimeData: "User content and technical identifiers require an explicit data-i18n-skip boundary; broad customer-route exclusions are forbidden." }, rows };
+const manifest = { schemaVersion: 3, repository: config.repository, activeRoutes: config.activeRoutes, excludedRouteEvidence: config.excludedRouteEvidence ?? {}, counts: { total: rows.length, ...counts, unowned: (counts.unowned ?? 0) + (counts["missing-key"] ?? 0) }, policy: { catalogue: "Only useLocale().t, namespaced next-intl useTranslations/getTranslations, request-locale translate(locale,key), or I18nText context-consumer references count as migrated.", authoredContent: "Only explicit data-i18n-content nodes and Markdown/MDX prose rows may be content-review exclusions.", skippedRuntimeData: "User content and technical identifiers require an explicit data-i18n-skip boundary; broad customer-route exclusions are forbidden." }, rows };
 if (process.argv.includes("--emit")) process.stdout.write(JSON.stringify(manifest));
 else {
   const committed = JSON.parse(readFileSync(resolve(root, config.manifest), "utf8"));
