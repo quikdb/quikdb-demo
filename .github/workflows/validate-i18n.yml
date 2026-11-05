@@ -20,6 +20,8 @@ jobs:
         with: { node-version: "20" }
       - run: corepack enable
       - run: yarn install --frozen-lockfile
+      - name: Emit the independently inspectable active-route ledger
+        run: node scripts/i18n-coverage.mjs --emit > i18n-coverage-bundle.json
       - name: Enforce committed active-route catalogue coverage
         run: node scripts/i18n-coverage.mjs
       - run: node --check scripts/i18n-visual.mjs
@@ -58,3 +60,8 @@ jobs:
         with:
           name: i18n-rtl-screenshots
           path: artifacts/i18n
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: i18n-coverage-ledger
+          path: i18n-coverage-bundle.json
