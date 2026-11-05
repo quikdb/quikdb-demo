@@ -7,9 +7,9 @@
     "i18n"
   ],
   "counts": {
-    "total": 6,
+    "total": 2,
     "actionable": 0,
-    "exceptions": 6
+    "exceptions": 2
   },
   "rows": [
     {
@@ -29,42 +29,6 @@
       "source": ".right-column {",
       "disposition": "dir-scoped-exception",
       "evidence": "Stable CSS grid-area selector name; it does not apply a physical CSS direction property."
-    },
-    {
-      "path": "app/globals.css",
-      "line": 285,
-      "kind": "physical-utility",
-      "token": "left",
-      "source": "/* Stats grid - top left */",
-      "disposition": "dir-scoped-exception",
-      "evidence": "Comment describing the fixed desktop grid artwork; no physical CSS property or utility."
-    },
-    {
-      "path": "app/globals.css",
-      "line": 328,
-      "kind": "physical-utility",
-      "token": "left",
-      "source": "/* Feed section - bottom left */",
-      "disposition": "dir-scoped-exception",
-      "evidence": "Comment describing the fixed desktop grid artwork; no physical CSS property or utility."
-    },
-    {
-      "path": "app/globals.css",
-      "line": 403,
-      "kind": "physical-utility",
-      "token": "right",
-      "source": "/* Node status - top right */",
-      "disposition": "dir-scoped-exception",
-      "evidence": "Comment describing the fixed desktop grid artwork; no physical CSS property or utility."
-    },
-    {
-      "path": "app/globals.css",
-      "line": 476,
-      "kind": "physical-utility",
-      "token": "right",
-      "source": "/* Info section - bottom right */",
-      "disposition": "dir-scoped-exception",
-      "evidence": "Comment describing the fixed desktop grid artwork; no physical CSS property or utility."
     }
   ]
 }
