@@ -14,10 +14,13 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with: { node-version: "20" }
       - run: corepack enable
       - run: yarn install --frozen-lockfile
+      - run: node --check scripts/i18n-visual.mjs
       - name: Build production English gate
         run: yarn build
       - name: Install browser verifier
