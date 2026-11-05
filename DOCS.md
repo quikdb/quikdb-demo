@@ -11,6 +11,10 @@ PR qualification separately exercises the production Arabic gate and the CI-only
 including keyboard focus, EN-to-AR and AR-to-EN interaction, persisted reload, English fallback,
 RTL boundaries and desktop/mobile screenshots.
 
+Both enforcement ledgers are acceptance-clean: the customer string ledger has 32 runtime catalogue
+references and zero unowned strings; the direction ledger has zero actionable rows and two explicit
+CSS grid-area selector exceptions (`left-column`/`right-column`) that do not apply direction.
+
 Single-page public reliability demo at `demo.quikdb.com`.
 
 ## HubSpot tracking
