@@ -11,6 +11,7 @@ const css = /\b((?:margin|padding|border)-(?:left|right)(?:-[a-z-]+)?|(?:left|ri
 const rows = [];
 for (const path of tracked) {
   if (!config.roots.some((prefix) => path === prefix || path.startsWith(`${prefix}/`))) continue;
+  if ((config.excludePrefixes ?? []).some((prefix) => path === prefix || path.startsWith(`${prefix}/`))) continue;
   if (!/\.(?:[cm]?[jt]sx?|css|scss)$/.test(path)) continue;
   const lines = readFileSync(resolve(root, path), "utf8").split(/\r?\n/);
   lines.forEach((line, index) => {

@@ -47,6 +47,7 @@ const inClassContext = (node) => {
 let files = 0, replacementsCount = 0;
 for (const path of tracked) {
   if (!config.roots.some((prefix) => path === prefix || path.startsWith(`${prefix}/`))) continue;
+  if ((config.excludePrefixes ?? []).some((prefix) => path === prefix || path.startsWith(`${prefix}/`))) continue;
   const absolute = resolve(root, path);
   let text = readFileSync(absolute, "utf8");
   if (/\.(?:[cm]?[jt]sx?)$/.test(path)) {
