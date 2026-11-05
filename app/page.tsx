@@ -22,7 +22,7 @@ interface Stats {
 }
 
 export default function Home() {
-  const { t } = useLocale();
+  const { t, formatNumber } = useLocale();
   const subtitles = [t('subtitle.servers'), t('subtitle.onCall'), t('subtitle.missed')];
   const [stats, setStats] = useState<Stats | null>(null);
   const [subtitleIndex, setSubtitleIndex] = useState(0);
@@ -137,15 +137,15 @@ export default function Home() {
           </div>
           <div className="stat-card">
             <div className="stat-label">{t('stats.executions')}</div>
-            <div className="stat-value">{stats.executions.toLocaleString()}</div>
+            <div className="stat-value">{formatNumber(stats.executions)}</div>
           </div>
           <div className="stat-card">
             <div className="stat-label">{t('stats.failed')}</div>
-            <div className="stat-value">{stats.failed}</div>
+            <div className="stat-value">{formatNumber(stats.failed)}</div>
           </div>
           <div className="stat-card">
             <div className="stat-label">{t('stats.replicas')}</div>
-            <div className="stat-value">{stats.activeReplicas}</div>
+            <div className="stat-value">{formatNumber(stats.activeReplicas)}</div>
           </div>
         </div>
 
